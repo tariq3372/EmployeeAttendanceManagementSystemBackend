@@ -5,6 +5,7 @@ const Department = require('../models/department.model');
 const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
 const { TOKEN_KEY } = require('../constants');
+const ADMIN = 'ADMIN';
 
 module.exports.addAdmin = async(req, res) => {
     try {
@@ -12,7 +13,7 @@ module.exports.addAdmin = async(req, res) => {
         const { email, password } = req.body;
         const salt = await bcrypt.genSalt(6);
         const hash = await bcrypt.hash(password, salt);
-        const token = jwt.sign({ email: email }, TOKEN_KEY, { expiresIn: '2h' });
+        const token = jwt.sign({ email: email, role: ADMIN }, TOKEN_KEY, { expiresIn: '2h' });
         const result = await Admin.create({ email, password: hash, token });
         if(result) {
             return res.status(200).send({

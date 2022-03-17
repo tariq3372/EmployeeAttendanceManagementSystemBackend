@@ -2,21 +2,28 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../../controllers/admin.controller');
 const { authenticateToken } = require('../../middlewares/authorization.middleware');
-router.post('/', adminController.addAdmin);
+const validation = require('../../middlewares/validation.middleware');
+const { check } = require('../../middlewares/check.middleware');
+
+// Admin End Points
+router.post('/', validation.validateAddAdminApi, check, adminController.addAdmin);
+
 // Department End Points
-router.post('/department', authenticateToken, adminController.addDepartment);
-router.get('/department', authenticateToken, adminController.getDepartment);
-router.delete('/department/:id', authenticateToken, adminController.deleteDepartment);
-router.put('/department/:id', authenticateToken, adminController.updateDepartment);
+router.post('/department', authenticateToken, validation.validateAddDepartmentApi, check, adminController.addDepartment);
+router.get('/department', authenticateToken, validation.validateGetDepartmentApi, check, adminController.getDepartment);
+router.delete('/department/:id', authenticateToken, validation.validateDeleteDepartmentApi, check, adminController.deleteDepartment);
+router.put('/department/:id', authenticateToken, validation.validateUpdateDepartmentApi, check, adminController.updateDepartment);
+
 // Job Title End Points
 router.post('/job-title', authenticateToken,  adminController.addJobTitle);
-router.get('/job-title', authenticateToken, adminController.getJobTitle);
-router.delete('/job-title/:id', authenticateToken, adminController.deleteJobTitle);
-router.put('/job-title/:id', authenticateToken, adminController.updateJobTitle);
+router.get('/job-title', authenticateToken, validation.validateGetJobTitleApi, check, adminController.getJobTitle);
+router.delete('/job-title/:id', authenticateToken, validation.validateDeleteJobTitleApi, check, adminController.deleteJobTitle);
+router.put('/job-title/:id', authenticateToken, validation.validateUpdateJobTitleApi, check, adminController.updateJobTitle);
+
 // Employee End Points
 router.post('/employee', authenticateToken, adminController.addEmployee);
-router.get('/employee', authenticateToken, adminController.getEmployee);
-router.delete('/employee/:id', authenticateToken, adminController.deleteEmployee);
-router.put('/employee/:id', authenticateToken, adminController.updateEmployee);
+router.get('/employee', authenticateToken, validation.validateGetEmployeeApi, check, adminController.getEmployee);
+router.delete('/employee/:id', authenticateToken, validation.validateDeleteEmployeeApi, check,  adminController.deleteEmployee);
+router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployeeApi, check, adminController.updateEmployee);
 
 module.exports = router;
