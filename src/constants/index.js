@@ -1,6 +1,6 @@
 module.exports = {
     PORT: 3000,
-    MONGO_URL: 'mongodb://localhost:27017/attendanceSystem',
+    MONGO_URL: 'mongodb+srv://tariq:6yTmeMAulseSxwdo@cluster0.guclr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
     API_V1: '/api/v1/',
     ADMIN: 'admin',
     FEMALE: 'FEMALE',
