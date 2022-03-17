@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../../controllers/admin.controller');
 const { authenticateToken } = require('../../middlewares/authorization.middleware');
-
 router.post('/', adminController.addAdmin);
 // Department End Points
 router.post('/department', authenticateToken, adminController.addDepartment);
