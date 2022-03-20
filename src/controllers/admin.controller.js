@@ -161,6 +161,24 @@ module.exports.updateDepartment = async(req, res) => {
     }
 }
 
+module.exports.getDepartmentCount = async(req, res) => {
+    try {
+        console.log("getDepartmentCount");
+        const count = await Department.countDocuments();
+        return res.status(200).send({
+            success: true,
+            count: count
+        })
+    }
+    catch(err) {
+        console.log("getDepartmentCount internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
 module.exports.addJobTitle = async(req, res) => {
     try {
         console.log("addJobTitle");
@@ -284,6 +302,24 @@ module.exports.updateJobTitle = async(req, res) => {
     }
 }
 
+module.exports.getJobTitleCount = async(req, res) => {
+    try {
+        console.log("getJobTitleCount");
+        const count = await JobTitle.countDocuments();
+        return res.status(200).send({
+            success: true,
+            count: count
+        })
+    }
+    catch(err) {
+        console.log("getJobTitleCount internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    } 
+}
+
 module.exports.addEmployee = async(req, res) => {
     try {
         console.log("addEmployee");
@@ -398,6 +434,24 @@ module.exports.updateEmployee = async(req, res) => {
     }
     catch(err) {
         console.log("updateEmployee internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports.getEmployeeCount = async(req, res) => {
+    try {
+        console.log("getEmployeeCount");
+        const count = await Employee.countDocuments();
+        return res.status(200).send({
+            success: true,
+            count: count
+        })
+    }
+    catch(err) {
+        console.log("getEmployeeCount internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"

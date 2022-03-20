@@ -13,17 +13,19 @@ router.post('/department', authenticateToken, validation.validateAddDepartmentAp
 router.get('/department', authenticateToken, validation.validateGetDepartmentApi, check, adminController.getDepartment);
 router.delete('/department/:id', authenticateToken, validation.validateDeleteDepartmentApi, check, adminController.deleteDepartment);
 router.put('/department/:id', authenticateToken, validation.validateUpdateDepartmentApi, check, adminController.updateDepartment);
-
+router.get('/department-count', authenticateToken, adminController.getDepartmentCount);
 // Job Title End Points
 router.post('/job-title', authenticateToken,  adminController.addJobTitle);
 router.get('/job-title', authenticateToken, validation.validateGetJobTitleApi, check, adminController.getJobTitle);
 router.delete('/job-title/:id', authenticateToken, validation.validateDeleteJobTitleApi, check, adminController.deleteJobTitle);
 router.put('/job-title/:id', authenticateToken, validation.validateUpdateJobTitleApi, check, adminController.updateJobTitle);
+router.get('/job-title-count', authenticateToken, adminController.getJobTitleCount);
 
 // Employee End Points
 router.post('/employee', authenticateToken, adminController.addEmployee);
 router.get('/employee', authenticateToken, validation.validateGetEmployeeApi, check, adminController.getEmployee);
 router.delete('/employee/:id', authenticateToken, validation.validateDeleteEmployeeApi, check,  adminController.deleteEmployee);
 router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployeeApi, check, adminController.updateEmployee);
+router.get('/employee-count', authenticateToken, adminController.getEmployeeCount);
 
 module.exports = router;
