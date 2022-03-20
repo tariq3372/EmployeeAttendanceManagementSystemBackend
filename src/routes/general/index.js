@@ -5,5 +5,4 @@ const validation = require('../../middlewares/validation.middleware');
 const { check } = require('../../middlewares/check.middleware');
 
 router.post('/login', validation.validateLoginApi, check, generalController.login);
-
 module.exports = router;

@@ -13,11 +13,14 @@ router.post('/department', authenticateToken, validation.validateAddDepartmentAp
 router.get('/department', authenticateToken, validation.validateGetDepartmentApi, check, adminController.getDepartment);
 router.delete('/department/:id', authenticateToken, validation.validateDeleteDepartmentApi, check, adminController.deleteDepartment);
 router.put('/department/:id', authenticateToken, validation.validateUpdateDepartmentApi, check, adminController.updateDepartment);
+router.get('/department-list', adminController.getDepartmentList);
+
 // Job Title End Points
 router.post('/job-title', authenticateToken,  adminController.addJobTitle);
 router.get('/job-title', authenticateToken, validation.validateGetJobTitleApi, check, adminController.getJobTitle);
 router.delete('/job-title/:id', authenticateToken, validation.validateDeleteJobTitleApi, check, adminController.deleteJobTitle);
 router.put('/job-title/:id', authenticateToken, validation.validateUpdateJobTitleApi, check, adminController.updateJobTitle);
+router.get('/job-title/department-id', adminController.getJobTitleByDepartmentId)
 
 // Employee End Points
 router.post('/employee', authenticateToken, adminController.addEmployee);
@@ -27,5 +30,6 @@ router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployee
 
 // General End Points
 router.get('/dashboard-count', authenticateToken, adminController.getDashboardCount);
+
 
 module.exports = router;

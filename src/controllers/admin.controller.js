@@ -95,6 +95,24 @@ module.exports.getDepartment = async(req, res) => {
     }
 }
 
+module.exports.getDepartmentList = async(req, res) => {
+    try {
+        console.log("getDepartmentList");
+        const result = await Department.find();
+        return res.status(200).send({
+            success: true,
+            result
+        })
+    }
+    catch(err) {
+        console.log("getDepartmentList internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
 module.exports.deleteDepartment = async(req, res) => {
     try {
         console.log("deleteDepartment");
@@ -277,6 +295,34 @@ module.exports.updateJobTitle = async(req, res) => {
     }
     catch(err) {
         console.log("updateJobTitle internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports.getJobTitleByDepartmentId = async(req, res) => {
+    try {
+        const { departmentId } = req.query
+        const result = await JobTitle.findOne({ deptId: departmentId });
+        if(result) {
+            return res.status(200).send({
+                success: true,
+                message: "Job Title found",
+                result
+            })
+        }
+        else {
+            return res.status(200).send({
+                success: false,
+                message: "Job Title not found",
+                result: null
+            })
+        }
+    }
+    catch(err) {
+        console.log("getJobTitleByDepartmentId internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"
