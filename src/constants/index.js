@@ -1,7 +1,7 @@
 module.exports = {
     PORT: 4000,
-    MONGO_URL: 'mongodb+srv://tariq:3NkIYDEh0p6bEB6r@cluster0.guclr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-    // MONGO_URL: 'mongodb://localhost:27017/attendanceSystem',
+    // MONGO_URL: 'mongodb+srv://tariq:3NkIYDEh0p6bEB6r@cluster0.guclr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    MONGO_URL: 'mongodb://localhost:27017/attendanceSystem',
     API_V1: '/api/v1/',
     ADMIN: 'admin',
     FEMALE: 'FEMALE',

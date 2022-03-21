@@ -9,7 +9,7 @@ const EMPLOYEE = "EMPLOYEE";
 
 module.exports.login = async(req, res) => {
     try {
-        console.log("adminAogin");
+        console.log("login");
         const { email, password, type } = req.body;
         let result;
         let data = {};
@@ -46,7 +46,7 @@ module.exports.login = async(req, res) => {
         }
     }
     catch(err) {
-        console.log("adminAogin internal server error", err);
+        console.log("login internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"

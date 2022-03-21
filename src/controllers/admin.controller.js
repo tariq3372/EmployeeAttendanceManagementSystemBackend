@@ -181,7 +181,7 @@ module.exports.updateDepartment = async(req, res) => {
 
 module.exports.addJobTitle = async(req, res) => {
     try {
-        console.log("addJobTitle");
+        console.log("****addJobTitle", req.body);
         const { jobTitle, deptId } = req.body;
         const result = await JobTitle.findOneAndUpdate({ jobTitle, deptId }, { jobTitle, deptId }, { new: true, upsert: true });
         if(result) {
