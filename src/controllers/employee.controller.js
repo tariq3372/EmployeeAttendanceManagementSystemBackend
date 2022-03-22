@@ -43,7 +43,9 @@ module.exports.checkOut = async(req, res) => {
         console.log("checkOut");
         const checkoutTime = new Date()
         const { id } = req.params;
-        const duty = await DutyDuration.findOne({ _id: id });
+        const duty = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
+
+        // const duty = await DutyDuration.findOne({ _id: id });
         const milisecond = checkoutTime - duty.date;
         // working hrs in min 
         const min = Math.floor((milisecond % 86400000)/60000);
@@ -52,7 +54,7 @@ module.exports.checkOut = async(req, res) => {
         const data = {
             employeeId: duty.employeeId,
             jobId: duty.jobId,
-            dutyId: id,
+            dutyId: duty._id,
             totalLabor: totalLabor,
             salary: totalLabor + PER_DAY_EXTRA_COST,
             date: new Date()
