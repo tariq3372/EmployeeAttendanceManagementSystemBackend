@@ -245,6 +245,7 @@ module.exports.deleteJobTitle = async (req, res) => {
         if (result && result.length) {
             return res.status(405).send({
                 success: false,
+                errorCode: "405",
                 message: "Job title cannot be deleted"
             })
         }
@@ -476,24 +477,17 @@ module.exports.getDashboardCount = async (req, res) => {
 module.exports.getAttendanceReport = async (req, res) => {
     try {
         console.log("getAttendanceReport");
-
         const result = await Employee.aggregate([
             {
                 $lookup: {
                     from: "dutydurations",
                     localField: "_id",
                     foreignField: "employeeId",
-                    as: "orders_info",
+                    as: "duty",
                 },
             },
             {
-                $unwind: "$orders_info",
-            },
-            {
-                $group: {
-                    _id: "$orders_info.employeeId",
-                    duration: { $sum: "$orders_info.duration" },
-                }
+                $unwind: "$duty",
             },
             {
                 $lookup: {
@@ -506,16 +500,30 @@ module.exports.getAttendanceReport = async (req, res) => {
             {
                 $unwind: "$report",
             },
+            // {
+            //     $project: {
+            //         _id: "$report.employeeId",
+            //         salary: { $sum: "$report.salary" },
+            //         totalLabor: { $sum: "$report.totalLabor" },
+            //         duration: { $round: [{ $divide: ["$duty.duration", 30] }, 1] },
+            //         fName: "$fName",
+            //         lName: "$lName"
+            //     }
+            // },
             {
                 $group: {
                     _id: "$report.employeeId",
                     salary: { $sum: "$report.salary" },
                     totalLabor: { $sum: "$report.totalLabor" },
-                    "duration": { "$first" : "$duration" },
+                    // "duration": { "$first" : "$duty.duration" },
+                    duration: { "$first": {$round: [{ $divide: ["$duty.duration", 60] }, 1] }},
+                    fName: { "$first": "$fName" },
+                    lName: { "$first": "$lName" }
                 }
             },
         ])
         return res.status(200).send({
+            success: true,
             result
         })
     }

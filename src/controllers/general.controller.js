@@ -36,9 +36,15 @@ module.exports.login = async(req, res) => {
                     result
                 })
             }
+            else {
+                return res.status(401).send({
+                    success: false,
+                    message: "User Is Not Authorized"
+                })
+            }
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "User Does Not Exist",
                 result: null
