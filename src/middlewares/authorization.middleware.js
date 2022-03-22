@@ -2,11 +2,9 @@ const jwt = require('jsonwebtoken');
 const { TOKEN_KEY } = require('../constants')
 module.exports.authenticateToken = async (req, res, next) => {
     try {
-        console.log("authenticateToken");
         const authToken = req.headers.authorization;
         const token = authToken && authToken.split(' ')[1];
         if (token) {
-            console.log("token");
             jwt.verify(token, TOKEN_KEY, (err, result) => {
                 if (err) {
                     console.log("token error", err)

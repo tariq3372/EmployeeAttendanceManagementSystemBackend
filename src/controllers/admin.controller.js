@@ -6,8 +6,8 @@ const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
 const { TOKEN_KEY } = require('../constants');
 const ADMIN = 'ADMIN';
-
-module.exports.addAdmin = async(req, res) => {
+const AttendanceReport = require('../models/attendanceReport.model');
+module.exports.addAdmin = async (req, res) => {
     try {
         console.log("getAdmin");
         const { email, password } = req.body;
@@ -15,7 +15,7 @@ module.exports.addAdmin = async(req, res) => {
         const hash = await bcrypt.hash(password, salt);
         const token = jwt.sign({ email: email, role: ADMIN }, TOKEN_KEY, { expiresIn: '2h' });
         const result = await Admin.create({ email, password: hash, token });
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Data Added successfully"
@@ -28,7 +28,7 @@ module.exports.addAdmin = async(req, res) => {
             });
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("getAdmin catch error", err);
         return res.status(500).send({
             error: true,
@@ -37,25 +37,25 @@ module.exports.addAdmin = async(req, res) => {
     }
 }
 
-module.exports.addDepartment = async(req, res) => {
+module.exports.addDepartment = async (req, res) => {
     try {
         console.log("addDepartment")
         const { departmentName } = req.body
-        const result = await Department.findOneAndUpdate({ departmentName },{ departmentName }, { new: true, upsert: true })
-        if(result) {
+        const result = await Department.findOneAndUpdate({ departmentName }, { departmentName }, { new: true, upsert: true })
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Department is added successfully"
             })
-        }   
+        }
         else {
             return res.status(200).send({
                 success: false,
                 message: "Department is not added"
             })
-        }         
+        }
     }
-    catch(err) {
+    catch (err) {
         console.log("addDepartment internal server error", err)
         return res.status(500).send({
             error: true,
@@ -64,13 +64,13 @@ module.exports.addDepartment = async(req, res) => {
     }
 }
 
-module.exports.getDepartment = async(req, res) => {
+module.exports.getDepartment = async (req, res) => {
     try {
         console.log("getDepartment")
         const { page, limit } = req.query;
         const totalDocs = await Department.countDocuments();
         const result = await Department.find().skip(Number(page - 1)).limit(limit);
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: 'Data Found',
@@ -86,7 +86,7 @@ module.exports.getDepartment = async(req, res) => {
                 result: null
             })
         }
-    } catch(err) {
+    } catch (err) {
         console.log("getDepartment internal server error", err);
         return res.status(500).send({
             error: true,
@@ -95,7 +95,7 @@ module.exports.getDepartment = async(req, res) => {
     }
 }
 
-module.exports.getDepartmentList = async(req, res) => {
+module.exports.getDepartmentList = async (req, res) => {
     try {
         console.log("getDepartmentList");
         const result = await Department.find();
@@ -104,7 +104,7 @@ module.exports.getDepartmentList = async(req, res) => {
             result
         })
     }
-    catch(err) {
+    catch (err) {
         console.log("getDepartmentList internal server error", err);
         return res.status(500).send({
             error: true,
@@ -113,12 +113,12 @@ module.exports.getDepartmentList = async(req, res) => {
     }
 }
 
-module.exports.deleteDepartment = async(req, res) => {
+module.exports.deleteDepartment = async (req, res) => {
     try {
         console.log("deleteDepartment");
         const { id } = req.params;
         const result = await JobTitle.find({ deptId: id });
-        if(result && result.length) {
+        if (result && result.length) {
             return res.status(405).send({
                 success: true,
                 message: "Department cannot be deleted",
@@ -126,7 +126,7 @@ module.exports.deleteDepartment = async(req, res) => {
         }
         else {
             const deleteDepartment = await Department.deleteOne({ _id: id });
-            if(deleteDepartment && deleteDepartment.deletedCount === 1) {
+            if (deleteDepartment && deleteDepartment.deletedCount === 1) {
                 return res.status(200).send({
                     success: true,
                     message: "Department deleted successfully"
@@ -140,7 +140,7 @@ module.exports.deleteDepartment = async(req, res) => {
             }
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("deleteDepartment internal server error", err);
         return res.status(500).send({
             error: true,
@@ -149,13 +149,13 @@ module.exports.deleteDepartment = async(req, res) => {
     }
 }
 
-module.exports.updateDepartment = async(req, res) => {
+module.exports.updateDepartment = async (req, res) => {
     try {
         console.log("updateDepartment")
         const { id } = req.params;
         const { departmentName } = req.body;
         const result = await Department.findOneAndUpdate({ _id: id }, { departmentName }, { new: true });
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Department updated successfully",
@@ -170,7 +170,7 @@ module.exports.updateDepartment = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("updateDepartment internal server error", err)
         return res.status(500).send({
             error: true,
@@ -179,12 +179,12 @@ module.exports.updateDepartment = async(req, res) => {
     }
 }
 
-module.exports.addJobTitle = async(req, res) => {
+module.exports.addJobTitle = async (req, res) => {
     try {
         console.log("****addJobTitle", req.body);
         const { jobTitle, deptId } = req.body;
         const result = await JobTitle.findOneAndUpdate({ jobTitle, deptId }, { jobTitle, deptId }, { new: true, upsert: true });
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Job Title Add successfully"
@@ -197,7 +197,7 @@ module.exports.addJobTitle = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("addJobTitle internal server error", err);
         return res.status(500).send({
             error: true,
@@ -206,13 +206,13 @@ module.exports.addJobTitle = async(req, res) => {
     }
 }
 
-module.exports.getJobTitle = async(req, res) => {
+module.exports.getJobTitle = async (req, res) => {
     try {
         console.log("getJobTitle");
         const { page, limit } = req.query
         const totalDocs = await JobTitle.countDocuments();
         const result = await JobTitle.find().skip(Number(page - 1)).limit(limit);
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Data found",
@@ -229,7 +229,7 @@ module.exports.getJobTitle = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("getJobTitle internal server error", err);
         return res.status(500).send({
             error: true,
@@ -238,11 +238,11 @@ module.exports.getJobTitle = async(req, res) => {
     }
 }
 
-module.exports.deleteJobTitle = async(req, res) => {
+module.exports.deleteJobTitle = async (req, res) => {
     try {
         const { id } = req.params;
         const result = await Employee.find({ jobTitleId: id })
-        if(result && result.length) {
+        if (result && result.length) {
             return res.status(405).send({
                 success: false,
                 message: "Job title cannot be deleted"
@@ -250,7 +250,7 @@ module.exports.deleteJobTitle = async(req, res) => {
         }
         else {
             const deleteJob = await JobTitle.deleteOne({ _id: id });
-            if(deleteJob && deleteJob.deletedCount === 1) {
+            if (deleteJob && deleteJob.deletedCount === 1) {
                 return res.status(200).send({
                     success: true,
                     message: "Job title is deleted successfully"
@@ -264,7 +264,7 @@ module.exports.deleteJobTitle = async(req, res) => {
             }
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("deleteJob internal server error", err);
         return res.status(500).send({
             error: true,
@@ -273,13 +273,13 @@ module.exports.deleteJobTitle = async(req, res) => {
     }
 }
 
-module.exports.updateJobTitle = async(req, res) => {
+module.exports.updateJobTitle = async (req, res) => {
     try {
         console.log("updateJobTitle")
         const { id } = req.params;
         const { jobTitle } = req.body;
-        const result = await JobTitle.findOneAndUpdate({ _id: id }, { jobTitle }, { new: true});
-        if(result) {
+        const result = await JobTitle.findOneAndUpdate({ _id: id }, { jobTitle }, { new: true });
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Job Title updated successfully",
@@ -293,7 +293,7 @@ module.exports.updateJobTitle = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("updateJobTitle internal server error", err);
         return res.status(500).send({
             error: true,
@@ -302,11 +302,11 @@ module.exports.updateJobTitle = async(req, res) => {
     }
 }
 
-module.exports.getJobTitleByDepartmentId = async(req, res) => {
+module.exports.getJobTitleByDepartmentId = async (req, res) => {
     try {
         const { departmentId } = req.query
-        const result = await JobTitle.findOne({ deptId: departmentId });
-        if(result) {
+        const result = await JobTitle.find({ deptId: departmentId });
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Job Title found",
@@ -321,7 +321,7 @@ module.exports.getJobTitleByDepartmentId = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("getJobTitleByDepartmentId internal server error", err);
         return res.status(500).send({
             error: true,
@@ -330,7 +330,7 @@ module.exports.getJobTitleByDepartmentId = async(req, res) => {
     }
 }
 
-module.exports.addEmployee = async(req, res) => {
+module.exports.addEmployee = async (req, res) => {
     try {
         console.log("addEmployee");
         let data = req.body;
@@ -340,7 +340,7 @@ module.exports.addEmployee = async(req, res) => {
         data.password = hash;
         data.token = token;
         const result = await Employee.create(data);
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Employee added successfully"
@@ -353,7 +353,7 @@ module.exports.addEmployee = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("addEmployee internal server error", err);
         return res.status(500).send({
             error: true,
@@ -362,13 +362,13 @@ module.exports.addEmployee = async(req, res) => {
     }
 }
 
-module.exports.getEmployee = async(req, res) => {
+module.exports.getEmployee = async (req, res) => {
     try {
         console.log("getEmployee")
         const { page, limit } = req.query;
         const totalDocs = await Employee.countDocuments();
         const result = await Employee.find().skip(Number(page - 1)).limit(limit);
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Data found",
@@ -385,7 +385,7 @@ module.exports.getEmployee = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("getEmployee internal server error", err);
         return res.status(500).send({
             error: true,
@@ -394,12 +394,12 @@ module.exports.getEmployee = async(req, res) => {
     }
 }
 
-module.exports.deleteEmployee = async(req, res) => {
+module.exports.deleteEmployee = async (req, res) => {
     try {
         console.log("deleteEmployee")
         const { id } = req.params;
         const result = await Employee.deleteOne({ _id: id });
-        if(result && result.deletedCount === 1) {
+        if (result && result.deletedCount === 1) {
             return res.status(200).send({
                 success: true,
                 message: "Data is deleted successfully",
@@ -412,7 +412,7 @@ module.exports.deleteEmployee = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("deleteEmployee internal server error", err);
         return res.status(500).send({
             error: true,
@@ -421,13 +421,13 @@ module.exports.deleteEmployee = async(req, res) => {
     }
 }
 
-module.exports.updateEmployee = async(req, res) => {
+module.exports.updateEmployee = async (req, res) => {
     try {
         console.log("updateEmployee")
         const { id } = req.params;
         const data = req.body;
         const result = await Employee.findOneAndUpdate({ _id: id }, data, { new: true });
-        if(result) {
+        if (result) {
             return res.status(200).send({
                 success: true,
                 message: "Employee updated successfully",
@@ -442,7 +442,7 @@ module.exports.updateEmployee = async(req, res) => {
             })
         }
     }
-    catch(err) {
+    catch (err) {
         console.log("updateEmployee internal server error", err);
         return res.status(500).send({
             error: true,
@@ -451,7 +451,7 @@ module.exports.updateEmployee = async(req, res) => {
     }
 }
 
-module.exports.getDashboardCount = async(req, res) => {
+module.exports.getDashboardCount = async (req, res) => {
     try {
         console.log("getDashboardCount");
         const departments = await Department.countDocuments();
@@ -464,11 +464,66 @@ module.exports.getDashboardCount = async(req, res) => {
             employees
         })
     }
-    catch(err) {
+    catch (err) {
         console.log("getDashboardCount internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"
+        })
+    }
+}
+
+module.exports.getAttendanceReport = async (req, res) => {
+    try {
+        console.log("getAttendanceReport");
+
+        const result = await Employee.aggregate([
+            {
+                $lookup: {
+                    from: "dutydurations",
+                    localField: "_id",
+                    foreignField: "employeeId",
+                    as: "orders_info",
+                },
+            },
+            {
+                $unwind: "$orders_info",
+            },
+            {
+                $group: {
+                    _id: "$orders_info.employeeId",
+                    duration: { $sum: "$orders_info.duration" },
+                }
+            },
+            {
+                $lookup: {
+                    from: "attendancereports",
+                    localField: "_id",
+                    foreignField: "employeeId",
+                    as: "report",
+                },
+            },
+            {
+                $unwind: "$report",
+            },
+            {
+                $group: {
+                    _id: "$report.employeeId",
+                    salary: { $sum: "$report.salary" },
+                    totalLabor: { $sum: "$report.totalLabor" },
+                    "duration": { "$first" : "$duration" },
+                }
+            },
+        ])
+        return res.status(200).send({
+            result
+        })
+    }
+    catch (err) {
+        console.log("getAttendanceReport internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error",
         })
     }
 }
