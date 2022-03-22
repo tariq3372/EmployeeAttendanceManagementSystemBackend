@@ -7,4 +7,5 @@ router.put('/check-out/:id', employeeController.checkOut);
 router.post('/leave', employeeController.leave);
 router.get('/attendance-report', employeeController.attendanceReport);
 router.get('/check-in-status', employeeController.checkInStatus);
+
 module.exports = router;

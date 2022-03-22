@@ -153,10 +153,10 @@ module.exports.attendanceReport = async(req, res) => {
 
 module.exports.checkInStatus = async(req, res) => {
     try {
-        const { _id } = req.query;
-        const isExist = await DutyDuration.findOne({ _id, duration: { $exists: false } });
+        const { id } = req.query;
+        const isDurationExist = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
         return res.status(200).send({
-            isExist: isExist? true : false
+            isDurationExist: isDurationExist? false: true
         })
     } catch(err) {
         console.log("checkInStatus internal server error", err);
