@@ -2,16 +2,16 @@ const DutyDuration = require('../models/dutyDuration.model');
 const Employee = require('../models/employee.model');
 const Leave = require('../models/leave.model');
 const AttendanceReport = require('../models/attendanceReport.model');
-const { PER_DAY_EXTRA_COST, PER_HOURS_COST } = require('../constants');
+const { PER_DAY_EXTRA_COST, PER_MIN_COST } = require('../constants');
 const { default: mongoose } = require('mongoose');
 
-module.exports.checkIn = async(req, res) => {
+module.exports. checkIn = async(req, res) => {
     try {
-        const { _id } = req.body;
+        const { id } = req.body;
 
-        const employee = await Employee.findOne({ _id }, { jobTitleId: 1 });
+        const employee = await Employee.findOne({ id }, { jobTitleId: 1 });
         const data = { 
-            "employeeId": _id,
+            "employeeId": id,
             "jobId": employee.jobTitleId,
             "date": new Date()
         }
@@ -23,7 +23,7 @@ module.exports.checkIn = async(req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 "success": false,
                 result: null
             })
@@ -49,8 +49,8 @@ module.exports.checkOut = async(req, res) => {
         const milisecond = checkoutTime - duty.date;
         // working hrs in min 
         const min = Math.floor((milisecond % 86400000)/60000);
-        const result = await DutyDuration.findOneAndUpdate({ _id: id }, { duration: min })
-        const totalLabor = PER_HOURS_COST * min
+        const result = await DutyDuration.findOneAndUpdate({employeeId: id, duration: { $exists: false } }, { duration: min })
+        const totalLabor = PER_MIN_COST * min
         const data = {
             employeeId: duty.employeeId,
             jobId: duty.jobId,
@@ -76,18 +76,18 @@ module.exports.checkOut = async(req, res) => {
 module.exports.leave = async(req, res) => {
     try {
         console.log("leave");
-        const { _id } = req.body;
-        const employee = await Employee.findOne({ _id }, { jobTitleId: 1 });
+        const { id } = req.body;
+        const employee = await Employee.findOne({ id }, { jobTitleId: 1 });
         var data = {
-            "employeeId": _id,
+            "employeeId": id,
             "jobId": employee.jobTitleId,
             "date": new Date()
         }
         const leave = await Leave.create(data);
         data = {
-            "employeeId": _id,
+            "employeeId": id,
             "jobId": employee.jobTitleId,
-            "leaveId": leave._id,
+            "leaveId": leave.id,
             "totalLabor": 0, // In case of leave it's 00
             "salary": PER_DAY_EXTRA_COST,
             "date": new Date()
@@ -155,6 +155,7 @@ module.exports.attendanceReport = async(req, res) => {
 
 module.exports.checkInStatus = async(req, res) => {
     try {
+        console.log("checkInStatus query", req.query)
         const { id } = req.query;
         const isDurationExist = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
         return res.status(200).send({

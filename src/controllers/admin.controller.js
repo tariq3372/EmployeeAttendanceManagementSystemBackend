@@ -4,9 +4,10 @@ const Admin = require('../models/admin.model');
 const Department = require('../models/department.model');
 const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
-const { TOKEN_KEY } = require('../constants');
+const { TOKEN_KEY } = process.env;
 const ADMIN = 'ADMIN';
 const AttendanceReport = require('../models/attendanceReport.model');
+
 module.exports.addAdmin = async (req, res) => {
     try {
         console.log("getAdmin");
@@ -49,7 +50,7 @@ module.exports.addDepartment = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "Department is not added"
             })
@@ -79,7 +80,7 @@ module.exports.getDepartment = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "No Data Found",
                 totalDocs: 0,
@@ -133,7 +134,7 @@ module.exports.deleteDepartment = async (req, res) => {
                 })
             }
             else {
-                return res.status(200).send({
+                return res.status(400).send({
                     success: false,
                     message: "No data found"
                 })
@@ -163,7 +164,7 @@ module.exports.updateDepartment = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "No data found",
                 result: null
@@ -258,7 +259,7 @@ module.exports.deleteJobTitle = async (req, res) => {
                 })
             }
             else {
-                return res.status(200).send({
+                return res.status(400).send({
                     success: false,
                     message: "No data found"
                 })
@@ -288,7 +289,7 @@ module.exports.updateJobTitle = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "No data found"
             })
@@ -348,7 +349,7 @@ module.exports.addEmployee = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "Employee could not be Added"
             })
@@ -407,7 +408,7 @@ module.exports.deleteEmployee = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "No data found"
             })
@@ -436,7 +437,7 @@ module.exports.updateEmployee = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "No data found",
                 result: null
@@ -500,23 +501,13 @@ module.exports.getAttendanceReport = async (req, res) => {
             {
                 $unwind: "$report",
             },
-            // {
-            //     $project: {
-            //         _id: "$report.employeeId",
-            //         salary: { $sum: "$report.salary" },
-            //         totalLabor: { $sum: "$report.totalLabor" },
-            //         duration: { $round: [{ $divide: ["$duty.duration", 30] }, 1] },
-            //         fName: "$fName",
-            //         lName: "$lName"
-            //     }
-            // },
             {
                 $group: {
                     _id: "$report.employeeId",
                     salary: { $sum: "$report.salary" },
                     totalLabor: { $sum: "$report.totalLabor" },
-                    // "duration": { "$first" : "$duty.duration" },
-                    duration: { "$first": {$round: [{ $divide: ["$duty.duration", 60] }, 1] }},
+                    workTimeInMins: { $sum: "$duty.duration" },
+                    // workingHrs: { "$first": {$round: [{ $divide: ["$duty.duration", 60] }, 1] }},
                     fName: { "$first": "$fName" },
                     lName: { "$first": "$lName" }
                 }

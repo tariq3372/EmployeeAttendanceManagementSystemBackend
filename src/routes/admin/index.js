@@ -32,6 +32,6 @@ router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployee
 router.get('/dashboard-count', authenticateToken, adminController.getDashboardCount);
 
 // Reports End Points
-router.get('/attendance-report',  adminController.getAttendanceReport)
+router.get('/attendance-report', authenticateToken,  adminController.getAttendanceReport)
 
 module.exports = router;

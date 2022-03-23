@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin.model');
 const Employee = require('../models/employee.model');
-const { TOKEN_KEY } = require('../constants');
+const { TOKEN_KEY } = process.env
 const ADMIN = "ADMIN";
 const EMPLOYEE = "EMPLOYEE";
 
