@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { TOKEN_KEY } = require('../constants')
+const { TOKEN_KEY } = process.env;
 module.exports.authenticateToken = async (req, res, next) => {
     try {
         const authToken = req.headers.authorization;
@@ -7,7 +7,6 @@ module.exports.authenticateToken = async (req, res, next) => {
         if (token) {
             jwt.verify(token, TOKEN_KEY, (err, result) => {
                 if (err) {
-                    console.log("token error", err)
                     return res.status(403).send({
                         authorization: false,
                         message: "Not Authorized"

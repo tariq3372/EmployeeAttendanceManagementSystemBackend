@@ -6,7 +6,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const { PORT, MONGO_URL } = process.env
-
 app = express();
 
 // APP.USE
@@ -30,7 +29,7 @@ mongoose.connect(MONGO_URL, {
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function () {
-  console.log("Connected successfully");
+  console.log("DB Connected successfully");
 });
 
 // Creating http server which will listen on port 3000

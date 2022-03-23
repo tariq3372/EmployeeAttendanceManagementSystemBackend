@@ -8,7 +8,6 @@ const { default: mongoose } = require('mongoose');
 module.exports. checkIn = async(req, res) => {
     try {
         const { id } = req.body;
-
         const employee = await Employee.findOne({ id }, { jobTitleId: 1 });
         const data = { 
             "employeeId": id,
@@ -44,8 +43,6 @@ module.exports.checkOut = async(req, res) => {
         const checkoutTime = new Date()
         const { id } = req.params;
         const duty = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
-
-        // const duty = await DutyDuration.findOne({ _id: id });
         const milisecond = checkoutTime - duty.date;
         // working hrs in min 
         const min = Math.floor((milisecond % 86400000)/60000);
@@ -106,56 +103,8 @@ module.exports.leave = async(req, res) => {
     }
 }
 
-module.exports.attendanceReport = async(req, res) => {
-    try {
-        const { _id } = req.query;
-        const leave = await Leave.countDocuments({ employeeId: _id });
-        const salary = await AttendanceReport.aggregate([
-            {
-                $match: {
-                    employeeId: mongoose.Types.ObjectId(_id)
-                },
-            },
-            {
-                $group: {
-                    _id: null,
-                    amount: { $sum: "$amount" }
-                }
-            }
-        ])
-
-        const workingHrs = await DutyDuration.aggregate([
-            {
-                $match: {
-                    employeeId: mongoose.Types.ObjectId(_id)
-                },
-
-            },
-            {
-                $group: {
-                    _id: null,
-                    duration: { $sum: "$duration" }
-                }
-            }
-        ])
-        return res.status(200).send({
-            leave,
-            "salary": salary[0].amount,
-            "totalWorkingHrs": workingHrs[0].duration,
-        })
-    }
-    catch(err) {
-        console.log("attendanceReport internal server error", err);
-        return res.status(500).send({
-            error: true,
-            message: "Internal server error"
-        })
-    }
-}
-
 module.exports.checkInStatus = async(req, res) => {
     try {
-        console.log("checkInStatus query", req.query)
         const { id } = req.query;
         const isDurationExist = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
         return res.status(200).send({
@@ -166,6 +115,52 @@ module.exports.checkInStatus = async(req, res) => {
         return res.status(500).send({
             error: true,
             message: "Internal server error"
+        })
+    }
+}
+
+module.exports.attendanceReport = async(req, res) => {
+    try {
+        const { _id } = req.query;
+        const totalLeaves = await Leave.countDocuments({ employeeId: _id });
+        const totalSalary = await AttendanceReport.aggregate([
+            {
+                $match: {
+                    employeeId: mongoose.Types.ObjectId(_id)
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    salary: { $sum: "$salary" }
+                }
+            }
+        ])
+        const totalWorkingMinutes = await DutyDuration.aggregate([
+            {
+                $match: {
+                    employeeId: mongoose.Types.ObjectId(_id)
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    workingMinutes: { $sum: "$duration" }
+                }
+            }
+        ])
+
+        return res.status(200).send({
+            totalLeaves,
+            totalSalary: totalSalary[0].salary,
+            totalWorkingMinutes: totalWorkingMinutes[0].workingMinutes
+        })
+    }
+    catch (err) {
+        console.log("getAttendanceReport internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error",
         })
     }
 }

@@ -10,7 +10,6 @@ const AttendanceReport = require('../models/attendanceReport.model');
 
 module.exports.addAdmin = async (req, res) => {
     try {
-        console.log("getAdmin");
         const { email, password } = req.body;
         const salt = await bcrypt.genSalt(6);
         const hash = await bcrypt.hash(password, salt);
@@ -23,7 +22,7 @@ module.exports.addAdmin = async (req, res) => {
             });
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "Data Is Not Added"
             });
@@ -40,7 +39,6 @@ module.exports.addAdmin = async (req, res) => {
 
 module.exports.addDepartment = async (req, res) => {
     try {
-        console.log("addDepartment")
         const { departmentName } = req.body
         const result = await Department.findOneAndUpdate({ departmentName }, { departmentName }, { new: true, upsert: true })
         if (result) {
@@ -67,11 +65,9 @@ module.exports.addDepartment = async (req, res) => {
 
 module.exports.getDepartment = async (req, res) => {
     try {
-        console.log("getDepartment")
-        const { page, limit } = req.query;
         const totalDocs = await Department.countDocuments();
-        const result = await Department.find().skip(Number(page - 1)).limit(limit);
-        if (result) {
+        const result = await Department.find()
+        if (result.length) {
             return res.status(200).send({
                 success: true,
                 message: 'Data Found',
@@ -80,11 +76,11 @@ module.exports.getDepartment = async (req, res) => {
             })
         }
         else {
-            return res.status(400).send({
+            return res.status(200).send({
                 success: false,
                 message: "No Data Found",
                 totalDocs: 0,
-                result: null
+                result: []
             })
         }
     } catch (err) {
@@ -98,7 +94,6 @@ module.exports.getDepartment = async (req, res) => {
 
 module.exports.getDepartmentList = async (req, res) => {
     try {
-        console.log("getDepartmentList");
         const result = await Department.find();
         return res.status(200).send({
             success: true,
@@ -116,7 +111,6 @@ module.exports.getDepartmentList = async (req, res) => {
 
 module.exports.deleteDepartment = async (req, res) => {
     try {
-        console.log("deleteDepartment");
         const { id } = req.params;
         const result = await JobTitle.find({ deptId: id });
         if (result && result.length) {
@@ -152,7 +146,6 @@ module.exports.deleteDepartment = async (req, res) => {
 
 module.exports.updateDepartment = async (req, res) => {
     try {
-        console.log("updateDepartment")
         const { id } = req.params;
         const { departmentName } = req.body;
         const result = await Department.findOneAndUpdate({ _id: id }, { departmentName }, { new: true });
@@ -167,7 +160,6 @@ module.exports.updateDepartment = async (req, res) => {
             return res.status(400).send({
                 success: false,
                 message: "No data found",
-                result: null
             })
         }
     }
@@ -182,7 +174,6 @@ module.exports.updateDepartment = async (req, res) => {
 
 module.exports.addJobTitle = async (req, res) => {
     try {
-        console.log("****addJobTitle", req.body);
         const { jobTitle, deptId } = req.body;
         const result = await JobTitle.findOneAndUpdate({ jobTitle, deptId }, { jobTitle, deptId }, { new: true, upsert: true });
         if (result) {
@@ -192,7 +183,7 @@ module.exports.addJobTitle = async (req, res) => {
             })
         }
         else {
-            return res.status(200).send({
+            return res.status(400).send({
                 success: false,
                 message: "Job Title Is Not Added"
             })
@@ -209,11 +200,9 @@ module.exports.addJobTitle = async (req, res) => {
 
 module.exports.getJobTitle = async (req, res) => {
     try {
-        console.log("getJobTitle");
-        const { page, limit } = req.query
         const totalDocs = await JobTitle.countDocuments();
-        const result = await JobTitle.find().skip(Number(page - 1)).limit(limit);
-        if (result) {
+        const result = await JobTitle.find();
+        if (result.length) {
             return res.status(200).send({
                 success: true,
                 message: "Data found",
@@ -226,7 +215,7 @@ module.exports.getJobTitle = async (req, res) => {
                 success: false,
                 message: "No data found",
                 totalDocs: 0,
-                result: null
+                result: []
             })
         }
     }
@@ -277,7 +266,6 @@ module.exports.deleteJobTitle = async (req, res) => {
 
 module.exports.updateJobTitle = async (req, res) => {
     try {
-        console.log("updateJobTitle")
         const { id } = req.params;
         const { jobTitle } = req.body;
         const result = await JobTitle.findOneAndUpdate({ _id: id }, { jobTitle }, { new: true });
@@ -334,7 +322,6 @@ module.exports.getJobTitleByDepartmentId = async (req, res) => {
 
 module.exports.addEmployee = async (req, res) => {
     try {
-        console.log("addEmployee");
         let data = req.body;
         const salt = await bcrypt.genSalt(6);
         const hash = await bcrypt.hash(data.password, salt);
@@ -366,11 +353,9 @@ module.exports.addEmployee = async (req, res) => {
 
 module.exports.getEmployee = async (req, res) => {
     try {
-        console.log("getEmployee")
-        const { page, limit } = req.query;
         const totalDocs = await Employee.countDocuments();
-        const result = await Employee.find().skip(Number(page - 1)).limit(limit);
-        if (result) {
+        const result = await Employee.find();
+        if (result.length) {
             return res.status(200).send({
                 success: true,
                 message: "Data found",
@@ -383,7 +368,7 @@ module.exports.getEmployee = async (req, res) => {
                 success: false,
                 message: "No data found",
                 totalDocs: 0,
-                result: null
+                result: []
             })
         }
     }
@@ -398,7 +383,6 @@ module.exports.getEmployee = async (req, res) => {
 
 module.exports.deleteEmployee = async (req, res) => {
     try {
-        console.log("deleteEmployee")
         const { id } = req.params;
         const result = await Employee.deleteOne({ _id: id });
         if (result && result.deletedCount === 1) {
@@ -425,7 +409,6 @@ module.exports.deleteEmployee = async (req, res) => {
 
 module.exports.updateEmployee = async (req, res) => {
     try {
-        console.log("updateEmployee")
         const { id } = req.params;
         const data = req.body;
         const result = await Employee.findOneAndUpdate({ _id: id }, data, { new: true });
@@ -440,7 +423,6 @@ module.exports.updateEmployee = async (req, res) => {
             return res.status(400).send({
                 success: false,
                 message: "No data found",
-                result: null
             })
         }
     }
@@ -455,7 +437,6 @@ module.exports.updateEmployee = async (req, res) => {
 
 module.exports.getDashboardCount = async (req, res) => {
     try {
-        console.log("getDashboardCount");
         const departments = await Department.countDocuments();
         const jobTitles = await JobTitle.countDocuments();
         const employees = await Employee.countDocuments();
@@ -477,7 +458,6 @@ module.exports.getDashboardCount = async (req, res) => {
 
 module.exports.getAttendanceReport = async (req, res) => {
     try {
-        console.log("getAttendanceReport");
         const result = await Employee.aggregate([
             {
                 $lookup: {
@@ -507,7 +487,6 @@ module.exports.getAttendanceReport = async (req, res) => {
                     salary: { $sum: "$report.salary" },
                     totalLabor: { $sum: "$report.totalLabor" },
                     workTimeInMins: { $sum: "$duty.duration" },
-                    // workingHrs: { "$first": {$round: [{ $divide: ["$duty.duration", 60] }, 1] }},
                     fName: { "$first": "$fName" },
                     lName: { "$first": "$lName" }
                 }

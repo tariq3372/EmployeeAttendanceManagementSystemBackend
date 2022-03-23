@@ -29,7 +29,7 @@ module.exports.login = async(req, res) => {
             if(isValidPassword) {
                 result.token = token
                 await result.save()
-                result.password = null // For Security reasons
+                result.password = null
                 return res.status(200).send({
                     success: true,
                     message: "User Is Authorized",
@@ -37,7 +37,7 @@ module.exports.login = async(req, res) => {
                 })
             }
             else {
-                return res.status(401).send({
+                return res.status(400).send({
                     success: false,
                     message: "User Is Not Authorized"
                 })
