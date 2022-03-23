@@ -6,7 +6,6 @@ const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
 const { TOKEN_KEY } = process.env;
 const ADMIN = 'ADMIN';
-const AttendanceReport = require('../models/attendanceReport.model');
 
 module.exports.addAdmin = async (req, res) => {
     try {
