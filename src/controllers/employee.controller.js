@@ -152,8 +152,8 @@ module.exports.attendanceReport = async(req, res) => {
 
         return res.status(200).send({
             totalLeaves,
-            totalSalary: totalSalary[0].salary,
-            totalWorkingMinutes: totalWorkingMinutes[0].workingMinutes
+            totalSalary: totalSalary[0]?.salary || 0,
+            totalWorkingMinutes: totalWorkingMinutes[0]?.workingMinutes || 0
         })
     }
     catch (err) {
