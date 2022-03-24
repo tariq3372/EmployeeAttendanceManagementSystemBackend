@@ -108,8 +108,10 @@ module.exports.checkInStatus = async(req, res) => {
     try {
         const { id } = req.query;
         const isDurationExist = await DutyDuration.findOne({ employeeId: id, duration: { $exists: false } });
+        const isLeaveRequestExist = await LeaveRequest.findOne({ employeeId: id, status: CREATED })
         return res.status(200).send({
-            isDurationExist: isDurationExist? false: true
+            isDurationExist: isDurationExist? false: true,
+            isLeaveRequestExist: isLeaveRequestExist? true: false
         })
     } catch(err) {
         console.log("checkInStatus internal server error", err);
