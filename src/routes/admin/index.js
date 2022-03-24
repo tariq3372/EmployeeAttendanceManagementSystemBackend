@@ -27,11 +27,12 @@ router.post('/employee', authenticateToken, adminController.addEmployee);
 router.get('/employee', authenticateToken, adminController.getEmployee);
 router.delete('/employee/:id', authenticateToken, validation.validateDeleteEmployeeApi, check,  adminController.deleteEmployee);
 router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployeeApi, check, adminController.updateEmployee);
+router.get('/employee/leave-request', authenticateToken, adminController.getEmployeeLeaveRequest);
 
 // General End Points
 router.get('/dashboard-count', authenticateToken, adminController.getDashboardCount);
 
 // Reports End Points
-router.get('/attendance-report', authenticateToken,  adminController.getAttendanceReport)
+router.get('/attendance-report', authenticateToken,  adminController.getAttendanceReport);
 
 module.exports = router;

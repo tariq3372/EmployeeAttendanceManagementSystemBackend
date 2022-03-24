@@ -168,7 +168,6 @@ module.exports.attendanceReport = async(req, res) => {
 
 module.exports.leaveRequest = async(req, res) => {
     try {
-        console.log("leaveRequest");
         const { _id } = req.query;
         const data = {
             employeeId: _id,

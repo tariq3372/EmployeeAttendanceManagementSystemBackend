@@ -4,8 +4,10 @@ const Admin = require('../models/admin.model');
 const Department = require('../models/department.model');
 const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
+const LeaveRequest = require('../models/leaveRequest.model');
 const { TOKEN_KEY } = process.env;
 const ADMIN = 'ADMIN';
+const { CREATED } = require('../constants');
 
 module.exports.addAdmin = async (req, res) => {
     try {
@@ -427,6 +429,31 @@ module.exports.updateEmployee = async (req, res) => {
     }
     catch (err) {
         console.log("updateEmployee internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports.getEmployeeLeaveRequest = async (req, res) => {
+    try {
+        const result = await LeaveRequest.find({ status: CREATED });
+        if(result && result.length) {
+            return res.status(200).send({
+                success: true,
+                message: "Data Found",
+                result
+            })
+        } else {
+            return res.status(200).send({
+                success: false,
+                message: "Data Not Found",
+                result: []
+            })
+        }
+    } catch(err) {
+        console.log("getEmployeeLeaveRequest internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"
