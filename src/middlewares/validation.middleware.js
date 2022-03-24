@@ -11,6 +11,7 @@ const JOB_TITLE = check('jobTitle').notEmpty().exists().trim().withMessage("Wron
 const F_NAME = check('fName').optional().notEmpty().exists().trim().withMessage("Wrong Name");
 const L_NAME = check('lName').optional().notEmpty().exists().trim().withMessage("Wrong Name");
 const GENDER = check('gender').optional().notEmpty().exists().trim().isIn([ FEMALE, MALE ]).withMessage("Wrong Gender");
+const _ID = check('_id').notEmpty().exists().trim().isMongoId().withMessage("Wrong ID");
 
 module.exports.validateLoginApi = [
     EMAIL,
@@ -46,4 +47,7 @@ module.exports.validateUpdateEmployeeApi = [
     F_NAME,
     L_NAME,
     GENDER
+]
+module.exports.validateLeaveRequestApi = [
+    _ID
 ]

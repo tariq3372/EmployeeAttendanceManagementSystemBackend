@@ -2,8 +2,9 @@ const DutyDuration = require('../models/dutyDuration.model');
 const Employee = require('../models/employee.model');
 const Leave = require('../models/leave.model');
 const AttendanceReport = require('../models/attendanceReport.model');
-const { PER_DAY_EXTRA_COST, PER_MIN_COST } = require('../constants');
+const { PER_DAY_EXTRA_COST, PER_MIN_COST, CREATED } = require('../constants');
 const { default: mongoose } = require('mongoose');
+const LeaveRequest = require('../models/leaveRequest.model');
 
 module.exports. checkIn = async(req, res) => {
     try {
@@ -161,6 +162,29 @@ module.exports.attendanceReport = async(req, res) => {
         return res.status(500).send({
             error: true,
             message: "Internal server error",
+        })
+    }
+}
+
+module.exports.leaveRequest = async(req, res) => {
+    try {
+        console.log("leaveRequest");
+        const { _id } = req.query;
+        const data = {
+            employeeId: _id,
+            status: CREATED,
+            createdAt: new Date()
+        }
+        const result = await LeaveRequest.create(data);
+        return res.status(200).send({
+            success: true,
+        })
+    }
+    catch(err) {
+        console.log("leaveRequest internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
         })
     }
 }
