@@ -9,7 +9,7 @@ const LeaveRequest = require('../models/leaveRequest.model');
 module.exports. checkIn = async(req, res) => {
     try {
         const { id } = req.body;
-        const employee = await Employee.findOne({ id }, { jobTitleId: 1 });
+        const employee = await Employee.findOne({ _id: id }, { jobTitleId: 1 });
         const data = { 
             "employeeId": id,
             "jobId": employee.jobTitleId,

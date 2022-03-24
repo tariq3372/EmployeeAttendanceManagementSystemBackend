@@ -5,9 +5,11 @@ const Department = require('../models/department.model');
 const JobTitle = require('../models/jobTitle.model');
 const Employee = require('../models/employee.model');
 const LeaveRequest = require('../models/leaveRequest.model');
+const Leave = require('../models/leave.model');
+const AttendanceReport = require('../models/attendanceReport.model');
 const { TOKEN_KEY } = process.env;
 const ADMIN = 'ADMIN';
-const { CREATED } = require('../constants');
+const { CREATED, APPROVED, PER_DAY_EXTRA_COST } = require('../constants');
 
 module.exports.addAdmin = async (req, res) => {
     try {
@@ -438,7 +440,32 @@ module.exports.updateEmployee = async (req, res) => {
 
 module.exports.getEmployeeLeaveRequest = async (req, res) => {
     try {
-        const result = await LeaveRequest.find({ status: CREATED });
+
+        const result = await LeaveRequest.aggregate([
+            {
+                $match: {
+                    status: CREATED
+                }
+            },
+            {
+                $lookup: {
+                    from: "employees",
+                    localField: "employeeId",
+                    foreignField: "_id",
+                    as: "employee"
+                }
+            },
+            {
+                $unwind: "$employee"
+            },
+            {
+                $project: {
+                    fName: '$employee.fName',
+                    lName: "$employee.lName",
+                    employeeId: "$employee._id"
+                }
+            }
+        ])
         if(result && result.length) {
             return res.status(200).send({
                 success: true,
@@ -454,6 +481,42 @@ module.exports.getEmployeeLeaveRequest = async (req, res) => {
         }
     } catch(err) {
         console.log("getEmployeeLeaveRequest internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports.updateEmployeeLeaveRequest = async (req, res) => {
+    try {
+        console.log("updateEmployeeLeaveRequest");
+        const { _id, status } = req.query;
+        const updateLeaveRequest = await LeaveRequest.findOneAndUpdate({ _id }, { status, modifiedAt: new Date() }, { new: true });
+        if(status === APPROVED) {
+            const emplopyee = await Employee.findOne({ _id: updateLeaveRequest.employeeId }, { jobTitleId: 1 });
+            var data = {
+                employeeId: emplopyee._id,
+                jobId: emplopyee.jobTitleId,
+                date: new Date()
+            }
+            const leave = await Leave.create(data);
+            data = {
+                employeeId: emplopyee._id,
+                jobId: emplopyee.jobTitleId,
+                leaveId: leave._id,
+                totalLabor: 0,
+                salary: PER_DAY_EXTRA_COST,
+                date: new Date()
+            }
+            const attendanceReport = await AttendanceReport.create(data);
+        }
+        return res.status(200).send({
+            success: true,
+        })
+
+    } catch(err) {
+        console.log("updateEmployeeLeaveRequest internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"

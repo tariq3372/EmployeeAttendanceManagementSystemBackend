@@ -27,8 +27,8 @@ router.post('/employee', authenticateToken, adminController.addEmployee);
 router.get('/employee', authenticateToken, adminController.getEmployee);
 router.delete('/employee/:id', authenticateToken, validation.validateDeleteEmployeeApi, check,  adminController.deleteEmployee);
 router.put('/employee/:id', authenticateToken, validation.validateUpdateEmployeeApi, check, adminController.updateEmployee);
-router.get('/employee/leave-request', authenticateToken, adminController.getEmployeeLeaveRequest);
-
+router.get('/employee/leave-request', adminController.getEmployeeLeaveRequest);
+router.post('/employee/leave-request', authenticateToken, adminController.updateEmployeeLeaveRequest);
 // General End Points
 router.get('/dashboard-count', authenticateToken, adminController.getDashboardCount);
 
