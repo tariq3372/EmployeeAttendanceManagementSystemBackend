@@ -152,11 +152,13 @@ module.exports.attendanceReport = async(req, res) => {
                 }
             }
         ])
-
+        const leaveRequestStatus = await LeaveRequest.findOne({ employeeId: _id }, { status: 1, _id: 0 }).sort({ createdAt: -1 })
+        console.log(leaveRequestStatus)
         return res.status(200).send({
             totalLeaves,
             totalSalary: totalSalary[0]?.salary || 0,
-            totalWorkingMinutes: totalWorkingMinutes[0]?.workingMinutes || 0
+            totalWorkingMinutes: totalWorkingMinutes[0]?.workingMinutes || 0,
+            leaveRequestStatus: leaveRequestStatus.status,
         })
     }
     catch (err) {
