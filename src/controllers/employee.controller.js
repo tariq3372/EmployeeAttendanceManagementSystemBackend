@@ -153,7 +153,6 @@ module.exports.attendanceReport = async(req, res) => {
             }
         ])
         const leaveRequestStatus = await LeaveRequest.findOne({ employeeId: _id }, { status: 1, _id: 0 }).sort({ createdAt: -1 })
-        console.log(leaveRequestStatus)
         return res.status(200).send({
             totalLeaves,
             totalSalary: totalSalary[0]?.salary || 0,
@@ -185,6 +184,32 @@ module.exports.leaveRequest = async(req, res) => {
     }
     catch(err) {
         console.log("leaveRequest internal server error", err);
+        return res.status(500).send({
+            error: true,
+            message: "Internal server error"
+        })
+    }
+}
+
+module.exports.getLeaveRequest = async(req, res) => {
+    try {
+        console.log("getLeaveRequest");
+        const { _id } = req.query;
+        const result = await LeaveRequest.find({ employeeId: _id }, { status: 1, createdAt: 1, _id: 0 });
+        if(result && result.length) { 
+            return res.status(200).send({
+                success: true,
+                result
+            })
+        } else {
+            return res.status(200).send({
+                success: false,
+                result: []
+            })
+        }
+    } 
+    catch(err) {
+        console.log("getLeaveRequest internal server error", err);
         return res.status(500).send({
             error: true,
             message: "Internal server error"
